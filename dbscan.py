@@ -41,13 +41,13 @@ class DBSCAN(object):
                     self.C += 1    
                     self.expandCluster(i)    
                 else : self.noise[i] = True 
-
+    
         return self.idx,self.noise
                             
     def regionQuery(self, i):
         g = self.dist[i,:] < self.epsilon 
         Neighbors = np.where(g == True)[0].tolist()
-
+    
         return Neighbors     
     
     def expandCluster(self, i):
@@ -104,7 +104,7 @@ class DBSCAN(object):
                 label='noise')        
 
         ax.legend(fontsize=10, loc='upper left')
-        plt.title('Scatter Plot of Clustering results', fontsize=15)
+        plt.title('Scatter Plot of Clustering result', fontsize=15)
         plt.xlabel('X', fontsize=14)
         plt.ylabel('Y', fontsize=14)
         plt.show()
@@ -112,7 +112,7 @@ class DBSCAN(object):
 
 
 #%% Run DEMO
-x = io.loadmat('./sample/sample.mat')['X']
+x = io.loadmat('./sample/data_3.mat')['X']
 # INIT DBSCAN
 dbscan = DBSCAN(x,1.2,2)
 # CLUSTERING
