@@ -9,7 +9,6 @@ Contact Info: :
 """
 
 import numpy as np
-from scipy import io
 from matplotlib import pyplot as plt
 
 class DBSCAN(object):
@@ -33,43 +32,42 @@ class DBSCAN(object):
         
     def run(self):
         # Clustering
-        for i,vector in enumerate(x):
+        for i in range(len(self.input)):
             if self.visited[i] == False:
                 self.visited[i] = True
                 self.neighbors = self.regionQuery(i)
-                if len(self.neighbors) > self.minpts:    
+                if len(self.neighbors) >= self.minpts:    
                     self.C += 1    
                     self.expandCluster(i)    
                 else : self.noise[i] = True 
-    
         return self.idx,self.noise
                             
     def regionQuery(self, i):
-        g = self.dist[i,:] < self.epsilon 
-        Neighbors = np.where(g == True)[0].tolist()
-    
+        g = self.dist[i,:] < self.epsilon
+        Neighbors = np.where(g)[0].tolist()
         return Neighbors     
     
     def expandCluster(self, i):
         self.idx[i] = self.C
         k = 0
-        
+       
         while True:
             try:
                 j = self.neighbors[k]
-            except:pass
+            except: return
             if self.visited[j] != True:
                 self.visited[j] = True
                 
                 self.neighbors2 = self.regionQuery(j)
-                
-                if len(self.neighbors2) > self.minpts:
-                    self.neighbors = self.neighbors+self.neighbors2
+                v = [self.neighbors2[i] for i in np.where(self.idx[self.neighbors2]==0)[0]]
+               
+                if len(self.neighbors2) >=  self.minpts:
+                    self.neighbors = self.neighbors+v 
                     
-            if self.idx[j] == 0 :  self.idx[j] = self.C 
-          
+            if self.idx[j] == 0 : self.idx[j] = self.C 
+            
             k += 1
-            if len(self.neighbors) < k:
+            if len(self.neighbors) < k-1:
                 return
             
     def sort(self):
@@ -97,8 +95,8 @@ class DBSCAN(object):
                     marker='o', 
                     linestyle='',
                     label=idx) 
-        ax.plot(noise[:,0], 
-                noise[:,1], 
+        ax.plot(self.noise[:,0], 
+                self.noise[:,1], 
                 marker='x', 
                 linestyle='',
                 label='noise')        
@@ -110,14 +108,3 @@ class DBSCAN(object):
         plt.show()
 
 
-
-#%% Run DEMO
-x = io.loadmat('./sample/data_3.mat')['X']
-# INIT DBSCAN
-dbscan = DBSCAN(x,1.2,2)
-# CLUSTERING
-idx, noise = dbscan.run()
-# SORTING
-cluster, noise = dbscan.sort()
-# PLOT
-dbscan.plot()
