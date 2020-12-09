@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 
 class DBSCAN(object):
 
-    def __init__(self,x,epsilon,minpts): 
+    def __init__(self,x,epsilon,minpts):
         # The number of input dataset
         self.n = len(x)
         # Euclidean distance
@@ -24,51 +24,50 @@ class DBSCAN(object):
         self.noise = np.full((self.n),False)
         # DBSCAN Parameters
         self.epsilon = epsilon
-        self.minpts = minpts 
+        self.minpts = minpts
         # Cluseter
         self.idx = np.full((self.n),0)
         self.C = 0
         self.input = x
-        
+
     def run(self):
         # Clustering
         for i in range(len(self.input)):
             if self.visited[i] == False:
                 self.visited[i] = True
                 self.neighbors = self.regionQuery(i)
-                if len(self.neighbors) >= self.minpts:    
-                    self.C += 1    
-                    self.expandCluster(i)    
-                else : self.noise[i] = True 
+                if len(self.neighbors) >= self.minpts:
+                    self.C += 1
+                    self.expandCluster(i)
+                else : self.noise[i] = True
         return self.idx,self.noise
-                            
+
     def regionQuery(self, i):
         g = self.dist[i,:] < self.epsilon
         Neighbors = np.where(g)[0].tolist()
-        return Neighbors     
-    
+        return Neighbors
+
     def expandCluster(self, i):
         self.idx[i] = self.C
         k = 0
        
         while True:
-            try:
-                j = self.neighbors[k]
-            except: return
+            # try:
+            if len(self.neighbors) <= k:return
+            j = self.neighbors[k]
+            # except: return
             if self.visited[j] != True:
                 self.visited[j] = True
-                
+
                 self.neighbors2 = self.regionQuery(j)
                 v = [self.neighbors2[i] for i in np.where(self.idx[self.neighbors2]==0)[0]]
                
                 if len(self.neighbors2) >=  self.minpts:
-                    self.neighbors = self.neighbors+v 
+                    self.neighbors = self.neighbors+v
                     
-            if self.idx[j] == 0 : self.idx[j] = self.C 
+            if self.idx[j] == 0 : self.idx[j] = self.C
             
             k += 1
-            if len(self.neighbors) < k-1:
-                return
             
     def sort(self):
         
@@ -82,24 +81,24 @@ class DBSCAN(object):
        
         self.noise = self.input[np.where(self.idx == 0)[0].tolist(),:]
         return self.cluster, self.noise
-              
+
     def plot(self):
         
         self.sort()
-        fig, ax = plt.subplots()
+        fig,ax = plt.subplots()
         
         for idx,group in enumerate(self.cluster):
         
-            ax.plot(group[0][:,0], 
-                    group[0][:,1], 
-                    marker='o', 
+            ax.plot(group[0][:,0],
+                    group[0][:,1],
+                    marker='o',
                     linestyle='',
-                    label=idx) 
-        ax.plot(self.noise[:,0], 
-                self.noise[:,1], 
-                marker='x', 
+                    label=idx)
+        ax.plot(self.noise[:,0],
+                self.noise[:,1],
+                marker='x',
                 linestyle='',
-                label='noise')        
+                label='noise')
 
         ax.legend(fontsize=10, loc='upper left')
         plt.title('Scatter Plot of Clustering result', fontsize=15)
