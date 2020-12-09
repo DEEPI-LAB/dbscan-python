@@ -12,7 +12,7 @@ Python implementation of 'DBSCAN' Algorithm using only Numpy and Matplotlib.
 
 ### Initialize DBSCAN
 
-You should install **numpy** and **matplotlib** for clustering and visualization. If you want to load sample data (sample.mat), you also need to install **scipy**.
+You should install **numpy** and **matplotlib** for clustering and visualization. If you want to load sample data (sample.mat), you also need to install **scipy**. Although it is ironic that there is a dbscan function in the scipy... :) **I've reinvented the wheel**
 
     dbscan = dbscan(x, eplison, minPts)
     
