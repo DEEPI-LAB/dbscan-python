@@ -1,11 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-Project Code: DBSCAN v1.0
+Project Code: DBSCAN v1.1
 @author: Deep.I Inc. @Jongwon Kim
 Revision date: 2020-12-07
 Contact Info: :
     https://deep-eye.tistory.com
     https://deep-i.net
+
+|--------------------------------------------------------------------------------------|
+| Python implementation of 'DBSCAN' Algorithm                                          |
+|     See : https://deep-eye.tistory.com/36                                            |  
+|                                                                                      |
+|     Inputs:                                                                          |
+|         x - A matrix whose columns are feature vectors                               |
+|         epsilon - The radius of a neighborhood with respect to some point            |
+|         minPts - The minimum number of points required to form a dense region        |
+|                                                                                      |
+|     Outputs:                                                                         |
+|         An array with either a cluster id number and noise id number for each        |
+|         column vector                                                                |
+|______________________________________________________________________________________|
+
 """
 
 import numpy as np
@@ -52,23 +67,20 @@ class DBSCAN(object):
         k = 0
        
         while True:
-            # try:
             if len(self.neighbors) <= k:return
             j = self.neighbors[k]
-            # except: return
             if self.visited[j] != True:
                 self.visited[j] = True
 
                 self.neighbors2 = self.regionQuery(j)
                 v = [self.neighbors2[i] for i in np.where(self.idx[self.neighbors2]==0)[0]]
-               
+
                 if len(self.neighbors2) >=  self.minpts:
                     self.neighbors = self.neighbors+v
-                    
+
             if self.idx[j] == 0 : self.idx[j] = self.C
-            
             k += 1
-            
+
     def sort(self):
         
         cnum = np.max(self.idx)
@@ -93,12 +105,14 @@ class DBSCAN(object):
                     group[0][:,1],
                     marker='o',
                     linestyle='',
-                    label=idx)
-        ax.plot(self.noise[:,0],
-                self.noise[:,1],
-                marker='x',
-                linestyle='',
-                label='noise')
+                    label='Cluster {}'.format(idx))
+
+            if self.noise != None:
+                ax.plot(self.noise[:,0],
+                    self.noise[:,1],
+                    marker='x',
+                    linestyle='',
+                    label='noise')
 
         ax.legend(fontsize=10, loc='upper left')
         plt.title('Scatter Plot of Clustering result', fontsize=15)

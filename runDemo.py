@@ -16,8 +16,8 @@ x = io.loadmat('./sample/sample.mat')['X']
 # INIT DBSCAN
 dbscan = DBSCAN(x,1.5,4)
 # CLUSTERING
-idx, noise = dbscan.run()
+idx,noise = dbscan.run()
 # SORTING
-g_cluster, n_cluster = dbscan.sort()
+g_cluster,n_cluster = dbscan.sort()
 # Visualization
 dbscan.plot()
